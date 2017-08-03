@@ -4,11 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ifpb.ads.model.Post;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Ricardo Job
@@ -19,6 +18,7 @@ public class Mapper {
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//            .configure(SerializationFeature. FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     public String toString(Object obj) throws MapperException {
         try {
@@ -45,4 +45,13 @@ public class Mapper {
         }
     }
 
+    public <Z> List<Z> toList(String json, Class<Z> clazz) throws MapperException {
+        try {
+            CollectionType javaType = objectMapper.getTypeFactory()
+                    .constructCollectionType(List.class, clazz);
+            return objectMapper.readValue(json, javaType);
+        } catch (IOException ex) {
+            throw new MapperException(ex);
+        }
+    }
 }

@@ -6,7 +6,6 @@ import ifpb.ads.model.Post;
 import ifpb.ads.model.User;
 import ifpb.ads.model.json.Mapper;
 import ifpb.ads.model.json.MapperException;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.client.Client;
@@ -194,3 +193,21 @@ public class Principal {
         }
     }
 }
+
+//  public JsonArray allAsJson() {
+//        Collector<JsonObject, ?, JsonArrayBuilder> jsonCollector
+//                = Collector.of(Json::createArrayBuilder, JsonArrayBuilder::add,
+//                        (left, right) -> {
+//                            left.add(right);
+//                            return left;
+//                        });
+//        return all().stream().map(this::convert).
+//                collect(jsonCollector).build();
+//
+//    }
+//JsonObject convert(Registration registration) {
+//        registration.setCalculator(this.priceCalculator::calculateTotal);
+//        return Json.createObjectBuilder().
+//                add("price", registration.getTotalPrice()).
+//                add(CONFIRMATION_ID, registration.getId()).build();
+//    }
