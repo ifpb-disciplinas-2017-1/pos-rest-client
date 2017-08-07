@@ -21,14 +21,16 @@ import javax.ws.rs.core.Response;
 public class ConsumerAutor {
 
     private final Mapper mapper = new Mapper();
-    private final String uri = "http://localhost:8080/reservas/api/autor";
-    private final Client client = ClientBuilder.newClient();
+    private final String uri = "http://localhost:8080/reservas/api/autor/";
+    private final Client client = ClientBuilder.newClient()
+            .register(new ClientFilterAuthorized("kiko", "1234"))
+            .register(new ClientResposeNotAuthorized());
     private final WebTarget root = client.target(uri);
 
     public static void main(String[] args) {
         ConsumerAutor consumer = new ConsumerAutor();
 //        consumer.listarAutorComId(101);
-//        consumer.listarTodosOsAutores();
+        consumer.listarTodosOsAutores();
 //        consumer.cadastrarNovoAutor();
     }
 
@@ -48,6 +50,10 @@ public class ConsumerAutor {
         try {
             Response response = root.request().get();
             String json = response.readEntity(String.class);
+            // Após ser consumido no (filtro) ClientResponse o entity fica vazio.
+            if(json.isEmpty()){ 
+                return;
+            }
             List<Autor> autores = mapper.toList(json, Autor.class);
             autores.stream().forEach(System.out::println);
         } catch (MapperException ex) {
@@ -64,7 +70,7 @@ public class ConsumerAutor {
                     .id(0)
                     .nome("João Roça King")
                     .build();
-            
+
             String json = mapper.toString(autor);
             Entity<String> entity = Entity.json(json);
             Response response = root.request().post(entity);
